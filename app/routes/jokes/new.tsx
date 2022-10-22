@@ -32,6 +32,14 @@ type ActionData = {
 const badRequest = (data: ActionData) =>
   json(data, { status: 400 });
 
+export function ErrorBoundary() {
+  return (
+    <div className="error-container">
+      Something unexpected went wrong. Sorry about that.
+    </div>
+  );
+}
+
 export const action: ActionFunction = async ({
   request,
 }) => {
