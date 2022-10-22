@@ -14,7 +14,9 @@ export const loader: LoaderFunction = async ({
   const joke = await db.joke.findUnique({
     where: { id: params.jokeId },
   });
+
   if (!joke) throw new Error("Joke not found");
+
   const data: LoaderData = { joke };
   return json(data);
 };
