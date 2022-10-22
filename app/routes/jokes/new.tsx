@@ -1,21 +1,9 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction , LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { useActionData, useCatch, Link } from "@remix-run/react";
 
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
-
-function validateJokeContent(content: string) {
-  if (content.length < 10) {
-    return `That joke is too short`;
-  }
-}
-
-function validateJokeName(name: string) {
-  if (name.length < 3) {
-    return `That joke's name is too short`;
-  }
-}
+import { requireUserId, getUserId } from "~/utils/session.server";
 
 type ActionData = {
   formError?: string;
@@ -29,16 +17,30 @@ type ActionData = {
   };
 };
 
+export const loader: LoaderFunction = async ({
+  request,
+}) => {
+  const userId = await getUserId(request);
+  if (!userId) {
+    throw new Response("Unauthorized", { status: 401 });
+  }
+  return json({});
+};
+
+function validateJokeContent(content: string) {
+  if (content.length < 10) {
+    return `That joke is too short`;
+  }
+}
+
+function validateJokeName(name: string) {
+  if (name.length < 3) {
+    return `That joke's name is too short`;
+  }
+}
+
 const badRequest = (data: ActionData) =>
   json(data, { status: 400 });
-
-export function ErrorBoundary() {
-  return (
-    <div className="error-container">
-      Something unexpected went wrong. Sorry about that.
-    </div>
-  );
-}
 
 export const action: ActionFunction = async ({
   request,
@@ -70,6 +72,27 @@ export const action: ActionFunction = async ({
   });
   return redirect(`/jokes/${joke.id}`);
 };
+
+export function ErrorBoundary() {
+  return (
+    <div className="error-container">
+      Something unexpected went wrong. Sorry about that.
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  if (caught.status === 401) {
+    return (
+      <div className="error-container">
+        <p>You must be logged in to create a joke.</p>
+        <Link to="/login">Login</Link>
+      </div>
+    );
+  }
+}
 
 export default function NewJokeRoute() {
   const actionData = useActionData<ActionData>();
