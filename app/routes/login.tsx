@@ -1,11 +1,12 @@
 import type {
+    MetaFunction,
     ActionFunction,
     LinksFunction,
   } from "@remix-run/node";
   import { json } from "@remix-run/node";
   import {
-    useActionData,
     Link,
+    useActionData,
     useSearchParams,
   } from "@remix-run/react";
   
@@ -15,6 +16,14 @@ import type {
   
   export const links: LinksFunction = () => {
     return [{ rel: "stylesheet", href: stylesUrl }];
+  };
+
+  export const meta: MetaFunction = () => {
+    return {
+      title: "Remix Jokes | Login",
+      description:
+        "Login to submit your own jokes to Remix Jokes!",
+    };
   };
   
   function validateUsername(username: unknown) {
@@ -250,4 +259,4 @@ import type {
         </div>
       </div>
     );
-  }
+  } 
