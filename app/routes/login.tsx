@@ -6,6 +6,7 @@ import type {
   import { json } from "@remix-run/node";
   import {
     Link,
+    Form,
     useActionData,
     useSearchParams,
   } from "@remix-run/react";
@@ -141,7 +142,7 @@ import type {
       <div className="container">
         <div className="content" data-light="">
           <h1>Login</h1>
-          <form method="post">
+          <Form method="post">
             <input
               type="hidden"
               name="redirectTo"
@@ -245,7 +246,7 @@ import type {
             <button type="submit" className="button">
               Submit
             </button>
-          </form>
+          </Form>
         </div>
         <div className="links">
           <ul>
